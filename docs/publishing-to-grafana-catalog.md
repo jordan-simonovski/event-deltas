@@ -61,14 +61,23 @@ them:
 Grafana renders these on the plugin page, so use the demo stack (`make up`) and
 capture the workflow, not an empty panel.
 
-### 3. Sign
+### 3. Do NOT sign the first release
 
-Set the repo variable `GRAFANA_SIGN_CATALOG=true` and the next release produces
-community-signed zips. An HTTP 409 still means the token's org does not own the
-ID prefix — see step 1.
+Submit unsigned. A plugin that has never been through review has no signature
+level, and `sign-plugin` answers HTTP 409 until it does:
 
-Signing a plugin the catalog has never seen is fine: the signature is what the
-submission is reviewed against.
+> The Grafana team needs to review public plugins before you can sign them.
+> — [Sign a plugin](https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin)
+
+A team member assigns the signature level on approval. Only then does
+`GRAFANA_SIGN_CATALOG=true` work, and it applies to the releases *after*
+approval, not the one being submitted.
+
+This is the same 409 the repo hit in July 2026 (commits `b5d517d`, `817129b`).
+The conclusion then was that the IDs were not registered in the catalog, which
+was correct; owning the `jordo` org slug does not change it. Registration
+happens at approval, not at org creation. Leave `GRAFANA_SIGN_CATALOG` unset
+until the catalog lists the plugin.
 
 ### 4. Validate
 
