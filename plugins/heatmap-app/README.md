@@ -65,4 +65,4 @@ something to find in the heatmap.
 
 ## License
 
-Apache-2.0. See [LICENSE](./LICENSE).
+Apache-2.0. See [LICENSE](https://github.com/jordan-simonovski/event-deltas/blob/main/plugins/heatmap-app/LICENSE).

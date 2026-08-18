@@ -48,4 +48,4 @@ npm run build --workspace=plugins/timeseries-selection-panel
 
 ## License
 
-Apache-2.0. See [LICENSE](./LICENSE).
+Apache-2.0. See [LICENSE](https://github.com/jordan-simonovski/event-deltas/blob/main/plugins/timeseries-selection-panel/LICENSE).
