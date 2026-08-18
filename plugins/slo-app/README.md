@@ -15,17 +15,17 @@ burning requests have in common.
 - The [ClickHouse data source](https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/),
   provisioned with the UID `clickhouse`, holding OpenTelemetry trace data in an
   `otel_traces` table.
-- Optional: the Heatmap Bubbles App (`jordo-heatmap-bubbles-app`) for trace
+- Optional: the Event Deltas App (`jordo-event-deltas-app`) for trace
   drilldown from an investigation.
 
 ## Pages
 
 | Page           | Path                                      | What it does                                             |
 | -------------- | ----------------------------------------- | -------------------------------------------------------- |
-| Investigations | `/a/jordo-slo-bubbles-app/investigations` | SLOs currently burning, ordered by urgency               |
-| SLO Catalog    | `/a/jordo-slo-bubbles-app/catalog`        | Every SLO with target, window and current compliance     |
-| Ownership      | `/a/jordo-slo-bubbles-app/ownership`      | Teams and the services they own                          |
-| Operations     | `/a/jordo-slo-bubbles-app/operations`     | Control plane state: burn events and managed alert rules |
+| Investigations | `/a/jordo-slo-app/investigations` | SLOs currently burning, ordered by urgency               |
+| SLO Catalog    | `/a/jordo-slo-app/catalog`        | Every SLO with target, window and current compliance     |
+| Ownership      | `/a/jordo-slo-app/ownership`      | Teams and the services they own                          |
+| Operations     | `/a/jordo-slo-app/operations`     | Control plane state: burn events and managed alert rules |
 
 Detail routes exist for a single team, service, or SLO.
 
@@ -42,7 +42,7 @@ and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 
 ```
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-slo-bubbles-app
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-slo-app
 ```
 
 ## Development

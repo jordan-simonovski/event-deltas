@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
-  "name": "Heatmap Bubbles",
-  "id": "jordo-heatmap-bubbles-panel",
+  "name": "Event Deltas",
+  "id": "jordo-event-deltas-panel",
   "info": {
-    "keywords": ["panel", "heatmap", "bubbles", "traces", "latency"],
-    "description": "Heatmap panel with box selection for Bubbles trace analysis",
+    "keywords": ["panel", "heatmap", "deltas", "traces", "latency"],
+    "description": "Heatmap panel with box selection for Event Deltas trace analysis",
     "author": {
       "name": "Jordan Simonovski",
       "url": "https://github.com/jordan-simonovski"

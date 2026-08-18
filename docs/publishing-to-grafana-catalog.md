@@ -8,7 +8,7 @@ its own review and terms — not relevant here, these are Apache-2.0.
 
 ## Submission order
 
-Submit the two panels and the Heatmap Bubbles App first. The SLO Analysis App
+Submit the two panels and the Event Deltas App first. The SLO Analysis App
 is deferred: a reviewer cannot exercise it without the Go control plane running
 alongside Grafana, which makes it the slowest of the four to get through review.
 Its metadata and README are catalog-ready either way.

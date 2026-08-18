@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "app",
   "name": "SLO Analysis App",
-  "id": "jordo-slo-bubbles-app",
+  "id": "jordo-slo-app",
   "info": {
     "keywords": ["app", "slo", "heatmap", "traces", "latency", "error-rate", "comparison"],
     "description": "SLO monitoring with heatmap drilldown and attribute comparison for root-cause analysis",

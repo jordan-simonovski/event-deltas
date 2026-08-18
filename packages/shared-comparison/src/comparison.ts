@@ -1,5 +1,5 @@
 /**
- * Comparison utilities for Bubbles analysis.
+ * Comparison utilities for Event Deltas analysis.
  *
  * Given baseline and selection distributions for an attribute,
  * computes the value with the highest percentage difference.

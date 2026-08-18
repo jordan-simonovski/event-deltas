@@ -1,11 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "app",
-  "name": "Heatmap Bubbles App",
-  "id": "jordo-heatmap-bubbles-app",
+  "name": "Event Deltas App",
+  "id": "jordo-event-deltas-app",
   "info": {
-    "keywords": ["app", "heatmap", "bubbles", "traces", "latency", "comparison"],
-    "description": "Bubbles trace analysis app with heatmap selection and attribute comparison",
+    "keywords": ["app", "heatmap", "deltas", "traces", "latency", "comparison"],
+    "description": "Event Deltas trace analysis app with heatmap selection and attribute comparison",
     "author": {
       "name": "Jordan Simonovski",
       "url": "https://github.com/jordan-simonovski"

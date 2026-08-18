@@ -1,5 +1,5 @@
 {
-  "name": "heatmap-bubbles",
+  "name": "event-deltas",
   "private": true,
   "scripts": {
     "dev": "npm run dev --workspace=plugins/heatmap-panel & npm run dev --workspace=plugins/timeseries-selection-panel & npm run dev --workspace=plugins/heatmap-app & npm run dev --workspace=plugins/slo-app",

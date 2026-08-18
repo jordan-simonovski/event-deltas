@@ -3,7 +3,7 @@ import { locationService } from '@grafana/runtime';
 import { ROUTES } from '../../constants';
 import { prefixRoute } from '../../utils/utils.routing';
 import { traceScene } from './traceScene';
-import { explorerPage } from '../Bubbles/bubblesPage';
+import { explorerPage } from '../Deltas/deltasPage';
 
 function getTraceIdFromPathname(pathname: string): string {
   const parts = pathname.split('/').filter(Boolean);

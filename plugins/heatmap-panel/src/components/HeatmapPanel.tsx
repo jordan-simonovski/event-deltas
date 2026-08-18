@@ -469,7 +469,7 @@ export const HeatmapPanel: React.FC<Props> = ({ options, data, width, height, ti
   }, [drag, onMouseUp]);
 
   // --- Context menu actions ---
-  const handleBubbles = useCallback(() => {
+  const handleAnalyze = useCallback(() => {
     if (!contextMenu) { return; }
     getAppEvents().publish(new HeatmapSelectionEvent(contextMenu.payload));
     setContextMenu(null);
@@ -591,7 +591,7 @@ export const HeatmapPanel: React.FC<Props> = ({ options, data, width, height, ti
           <MenuItem
             icon="M3 3h18v2H3V3zm0 8h18v2H3v-2zm0 8h18v2H3v-2z"
             label="Analyze selection"
-            onClick={handleBubbles}
+            onClick={handleAnalyze}
             theme={theme}
           />
           <MenuItem

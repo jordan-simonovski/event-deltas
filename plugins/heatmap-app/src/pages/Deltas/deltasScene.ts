@@ -17,10 +17,10 @@ import {
 import { locationService } from '@grafana/runtime';
 import { CLICKHOUSE_DS, ROUTES } from '../../constants';
 import { prefixRoute } from '../../utils/utils.routing';
-import { SelectionState } from '../../components/Bubbles/SelectionState';
-import { AttributeComparisonPanel } from '../../components/Bubbles/AttributeComparisonPanel';
-import { RepresentativeTracesPanel } from '../../components/Bubbles/RepresentativeTracesPanel';
-import { ViewModeControl } from '../../components/Bubbles/ViewModeControl';
+import { SelectionState } from '../../components/Deltas/SelectionState';
+import { AttributeComparisonPanel } from '../../components/Deltas/AttributeComparisonPanel';
+import { RepresentativeTracesPanel } from '../../components/Deltas/RepresentativeTracesPanel';
+import { ViewModeControl } from '../../components/Deltas/ViewModeControl';
 import {
   InvestigationGuidancePanel,
   SaturationPanel,
@@ -68,7 +68,7 @@ function buildHeatmapSql(
         LIMIT 10000`;
 }
 
-export function bubblesScene(view: WorkbenchView = 'explorer') {
+export function deltasScene(view: WorkbenchView = 'explorer') {
   const timeRange = new SceneTimeRange({
     from: 'now-15m',
     to: 'now',
@@ -280,7 +280,7 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
 
   const heatmapVizPanel = new VizPanel({
     title: PANEL_TITLES[currentMode()] ?? PANEL_TITLES.latency,
-    pluginId: 'jordo-heatmap-bubbles-panel',
+    pluginId: 'jordo-event-deltas-panel',
     options: {
       yAxisScale: 'log',
       colorScheme: 'blues',

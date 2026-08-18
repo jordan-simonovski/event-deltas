@@ -1,11 +1,11 @@
-# Heatmap Bubbles
+# Event Deltas
 
 Trace analysis for Grafana with heatmap selection and attribute comparison, powered by ClickHouse.
 
 ## Architecture
 
 - **Heatmap Panel Plugin** (`plugins/heatmap-panel`): Canvas-based heatmap of span latencies with box selection
-- **Bubbles App Plugin** (`plugins/heatmap-app`): Comparison view showing attribute distributions for selected vs baseline spans
+- **Event Deltas App Plugin** (`plugins/heatmap-app`): Comparison view showing attribute distributions for selected vs baseline spans
 - **SLO App Plugin** (`plugins/slo-app`): SLO monitoring with heatmap drilldown for root-cause analysis
 - **Shared Comparison** (`packages/shared-comparison`): Reusable comparison components shared across apps
 - **Trace Generator** (`trace-generator`): Go service emitting synthetic traces with deliberate failure scenarios
@@ -22,30 +22,33 @@ npm run build
 cd docker && docker compose up --build
 ```
 
-Open http://localhost:3000 and navigate to the Heatmap Bubbles App or SLO Analysis App.
+Open http://localhost:3000 and navigate to the Event Deltas App or SLO Analysis App.
 
 ## Installing the Plugins
 
 Each plugin is published as a zip on [GitHub Releases](https://github.com/jordan-simonovski/heatmap-investigation/releases), tagged `<plugin-id>-v<version>`. The zips are unsigned, so Grafana must allowlist the plugin IDs.
 
 ```bash
-# Download and extract into Grafana's plugin directory
+# Download and extract into Grafana's plugin directory.
+# Pick a version from the releases page; the tag is <plugin-id>-v<version>.
+PLUGIN=jordo-event-deltas-panel
+VERSION=2.0.0
 cd /var/lib/grafana/plugins
-curl -fsSLO https://github.com/jordan-simonovski/heatmap-investigation/releases/download/jordo-heatmap-bubbles-panel-v1.0.3/jordo-heatmap-bubbles-panel-1.0.3.zip
-unzip jordo-heatmap-bubbles-panel-1.0.3.zip && rm jordo-heatmap-bubbles-panel-1.0.3.zip
+curl -fsSLO "https://github.com/jordan-simonovski/heatmap-investigation/releases/download/$PLUGIN-v$VERSION/$PLUGIN-$VERSION.zip"
+unzip "$PLUGIN-$VERSION.zip" && rm "$PLUGIN-$VERSION.zip"
 ```
 
 Then allow the unsigned plugins and restart Grafana — either in `grafana.ini`:
 
 ```ini
 [plugins]
-allow_loading_unsigned_plugins = jordo-heatmap-bubbles-panel,jordo-timeseries-selection-panel,jordo-heatmap-bubbles-app,jordo-slo-bubbles-app
+allow_loading_unsigned_plugins = jordo-event-deltas-panel,jordo-timeseries-selection-panel,jordo-event-deltas-app,jordo-slo-app
 ```
 
 or as an environment variable (how `docker/docker-compose.yml` does it):
 
 ```bash
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-heatmap-bubbles-panel,jordo-timeseries-selection-panel,jordo-heatmap-bubbles-app,jordo-slo-bubbles-app
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-event-deltas-panel,jordo-timeseries-selection-panel,jordo-event-deltas-app,jordo-slo-app
 ```
 
 Note: unsigned plugins can't be loaded on Grafana Cloud. To run there, sign the zips privately by setting the `GRAFANA_SIGN_ROOT_URLS` repo variable (comma-separated instance root URLs, e.g. `https://myorg.grafana.net`) before the release is published — the release workflow then produces signed zips scoped to those instances.

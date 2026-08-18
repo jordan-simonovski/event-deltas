@@ -1,4 +1,4 @@
-# Heatmap Bubbles App
+# Event Deltas App
 
 A trace analysis workbench built on [Grafana Scenes](https://grafana.com/developers/scenes).
 Select a cluster of slow or failing requests on a latency heatmap, and the app
@@ -24,8 +24,8 @@ configurable is tracked in the repository.
 
 | Page     | Path                                          | What it does                                                                                                             |
 | -------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Explorer | `/a/jordo-heatmap-bubbles-app/explorer`       | Latency heatmap in latency or errors mode, box selection, and attribute comparison of the selection against the baseline |
-| Trace    | `/a/jordo-heatmap-bubbles-app/trace/:traceId` | Span waterfall for one trace, with error insights                                                                        |
+| Explorer | `/a/jordo-event-deltas-app/explorer`       | Latency heatmap in latency or errors mode, box selection, and attribute comparison of the selection against the baseline |
+| Trace    | `/a/jordo-event-deltas-app/trace/:traceId` | Span waterfall for one trace, with error insights                                                                        |
 
 ## Usage
 
@@ -36,8 +36,8 @@ configurable is tracked in the repository.
    selection than outside it are ranked first.
 5. Open a representative trace to see the span waterfall behind the pattern.
 
-Selections travel on Grafana's app event bus (`heatmap-bubbles-selection`), so
-the Heatmap Bubbles and Timeseries Selection panels can drive the same
+Selections travel on Grafana's app event bus (`event-deltas-selection`), so
+the Event Deltas and Timeseries Selection panels can drive the same
 comparison from an ordinary dashboard.
 
 ## Installation
@@ -47,7 +47,7 @@ and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 
 ```
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-heatmap-bubbles-app
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-event-deltas-app
 ```
 
 ## Development

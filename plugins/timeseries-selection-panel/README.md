@@ -14,7 +14,7 @@ panel can compare the selected window against the rest of the series.
 Add the panel to a dashboard, then drag across it to select a window. Right
 click the selection for **Analyse Selection** (publishes the selection) or
 **Zoom to time range** (moves the dashboard time range). Selections are emitted
-as `heatmap-bubbles-selection` events, the same contract the Heatmap Bubbles
+as `event-deltas-selection` events, the same contract the Event Deltas
 panel and app use.
 
 ## Options

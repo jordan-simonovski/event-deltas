@@ -1,4 +1,4 @@
-# Heatmap Bubbles
+# Event Deltas
 
 A latency heatmap panel with box selection. Drag a box over a cluster of slow or
 failing requests and the panel publishes the selection on Grafana's app event
@@ -23,9 +23,9 @@ ClickHouse with OpenTelemetry trace data.
 ## Usage
 
 Add the panel to a dashboard, point it at a query as above, then drag a box on
-the heatmap. The panel emits a `heatmap-bubbles-selection` event carrying the
+the heatmap. The panel emits an `event-deltas-selection` event carrying the
 selected time range, latency range, trace ids and span count; clearing the
-selection emits `heatmap-bubbles-selection-clear`. The Heatmap Bubbles App
+selection emits `event-deltas-selection-clear`. The Event Deltas App
 consumes those events to show what is different about the selected traces.
 
 ## Options
@@ -44,7 +44,7 @@ and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 
 ```
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-heatmap-bubbles-panel
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-event-deltas-panel
 ```
 
 ## Development
