@@ -7,8 +7,4 @@ export enum ROUTES {
   Trace = 'trace',
 }
 
-export const CLICKHOUSE_DS = {
-  uid: 'clickhouse',
-  type: 'grafana-clickhouse-datasource',
-};
 

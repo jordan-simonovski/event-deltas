@@ -12,13 +12,21 @@ candidate causes for you.
 ## Requirements
 
 - Grafana 12.0 or later.
-- The [ClickHouse data source](https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/),
-  provisioned with the UID `clickhouse`.
-- OpenTelemetry trace data in a ClickHouse table named `otel_traces` — the
-  schema the OpenTelemetry Collector's ClickHouse exporter creates by default.
+- The [ClickHouse data source](https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/).
+- OpenTelemetry trace data in ClickHouse — the schema the OpenTelemetry
+  Collector's ClickHouse exporter creates by default.
 
-The data source UID and table name are currently fixed; making them
-configurable is tracked in the repository.
+## Configuration
+
+**Administration > Plugins > Event Deltas App > Configuration**:
+
+| Setting | Default | Description |
+|---|---|---|
+| Data source | `clickhouse` | The ClickHouse data source holding your spans |
+| Traces table | `otel_traces` | Table of OpenTelemetry spans. Qualify as `database.table` if the data source's default database is not the right one |
+
+The defaults match the bundled demo stack, so `make up` needs no configuration.
+Saving reloads the page, because the app reads these settings once on load.
 
 ## Pages
 
