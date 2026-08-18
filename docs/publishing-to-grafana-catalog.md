@@ -6,6 +6,13 @@ manual submission per plugin. This is what is done, and what still needs doing.
 The catalog is the free listing. The Grafana Marketplace is the paid track with
 its own review and terms — not relevant here, these are Apache-2.0.
 
+## Submission order
+
+Submit the two panels and the Heatmap Bubbles App first. The SLO Analysis App
+is deferred: a reviewer cannot exercise it without the Go control plane running
+alongside Grafana, which makes it the slowest of the four to get through review.
+Its metadata and README are catalog-ready either way.
+
 ## Done in this repo
 
 - Plugin metadata: real author, `links` (website, docs, license), `$schema` on
@@ -31,7 +38,8 @@ existing install, so decide before the first catalog release.
 ### 2. Screenshots
 
 `info.screenshots` is empty in all four manifests. The catalog page needs at
-least one image per plugin. Drop PNGs into `plugins/<plugin>/src/img/` and list
+least one image per plugin (the SLO Analysis App can wait, see submission order
+above). Drop PNGs into `plugins/<plugin>/src/img/` and list
 them:
 
 ```json
