@@ -46,9 +46,15 @@ function buildAdHocWhere(slo: SLODefinition, adHocFilters: AdHocFiltersVariable)
   return parts.join('\n          AND ');
 }
 
+/** How many spans the drilldown heatmap samples. */
+const HEATMAP_SAMPLE_SIZE = 10000;
+
 /** Raw span query for heatmap (latency SLOs) */
 function buildLatencyDrilldownSql(slo: SLODefinition, adHocFilters: AdHocFiltersVariable): string {
   const where = buildAdHocWhere(slo, adHocFilters);
+  // Hash order, not time order: `ORDER BY Timestamp LIMIT n` returns the oldest
+  // n spans, which on a busy window is its opening seconds rather than a sample
+  // of it. cityHash64 samples the whole window and is stable across refreshes.
   return `SELECT
           Timestamp as timestamp,
           Duration / 1000000 as duration,
@@ -56,8 +62,8 @@ function buildLatencyDrilldownSql(slo: SLODefinition, adHocFilters: AdHocFilters
         FROM otel_traces
         WHERE $__timeFilter(Timestamp)
           AND ${where}
-        ORDER BY Timestamp
-        LIMIT 10000`;
+        ORDER BY cityHash64(TraceId)
+        LIMIT ${HEATMAP_SAMPLE_SIZE}`;
 }
 
 /** Aggregated error rate query for timeseries (error_rate SLOs) */

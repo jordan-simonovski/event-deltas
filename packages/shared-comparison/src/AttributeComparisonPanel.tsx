@@ -14,6 +14,8 @@ import { getBackendSrv } from '@grafana/runtime';
 import { lastValueFrom } from 'rxjs';
 import { HeatmapSelection } from './types';
 import { ComparisonResult, ValueDistribution, computeComparison } from './comparison';
+import { isHighCardinality } from './comparisonStats';
+import { buildComparisonSql } from './comparisonSql';
 import { quoteSqlString } from './sqlFilters';
 import { getTopDisplayValues } from './displayValues';
 import { buildFilterClause } from './sqlFilters';
@@ -21,15 +23,30 @@ import { buildFilterClause } from './sqlFilters';
 export interface ComparisonAttribute {
   /** Display label shown on the card */
   label: string;
-  /** SQL expression for the column value — e.g. `SpanAttributes['http.route']` or `StatusCode` */
+  /** SQL expression for the column value — e.g. `StatusCode` */
   expr: string;
 }
+
+/** One (attribute, value) row of the comparison query. */
+interface ComparisonRow {
+  key: string;
+  value: string;
+  selCount: number;
+  baseCount: number;
+  selTotal: number;
+  baseTotal: number;
+  distinctValues: number;
+}
+
+/** Values kept per attribute. Totals are exact regardless — this only caps what we draw. */
+const VALUES_PER_ATTRIBUTE = 20;
+
+/** Beyond this many selected traces, filter by the drawn box instead of by id. */
+const MAX_INLINE_TRACE_IDS = 5000;
 
 /** Configuration injected per-app so the panel is datasource/attribute agnostic. */
 export interface ComparisonPanelConfig {
   datasource: { uid: string; type: string };
-  /** Static attribute list. When empty or omitted, attributes are discovered dynamically from SpanAttributes keys. */
-  attributes?: ComparisonAttribute[];
   tracesTable?: string; // default 'otel_traces'
 }
 
@@ -135,50 +152,6 @@ export class AttributeComparisonPanel extends SceneObjectBase<AttributeCompariso
     }
   }
 
-  private async discoverAttributes(whereFilter: string): Promise<ComparisonAttribute[]> {
-    const sql = `SELECT DISTINCT arrayJoin(SpanAttributes.keys) AS key
-    FROM ${this.table}
-    WHERE ${whereFilter}
-    ORDER BY key
-    LIMIT 50`;
-
-    try {
-      const response = await lastValueFrom(
-        getBackendSrv().fetch<{ results: Record<string, { frames: Array<{ data: { values: unknown[][] } }> }> }>({
-          url: '/api/ds/query',
-          method: 'POST',
-          data: {
-            queries: [{
-              refId: 'A',
-              datasource: this.config.datasource,
-              rawSql: sql,
-              format: 1,
-              queryType: 'sql',
-            }],
-            from: '0',
-            to: String(Date.now()),
-          },
-        })
-      );
-
-      const frames = response.data?.results?.A?.frames;
-      if (!frames || frames.length === 0) {
-        return [...AttributeComparisonPanel.TOP_LEVEL_COLUMNS];
-      }
-
-      const keys = (frames[0].data?.values?.[0] ?? []) as string[];
-      const spanAttrs: ComparisonAttribute[] = keys.map((k) => ({
-        label: k,
-        expr: `SpanAttributes['${k}']`,
-      }));
-
-      return [...AttributeComparisonPanel.TOP_LEVEL_COLUMNS, ...spanAttrs];
-    } catch (err) {
-      console.error('Attribute discovery failed:', err);
-      return [...AttributeComparisonPanel.TOP_LEVEL_COLUMNS];
-    }
-  }
-
   private async runComparison(sel: HeatmapSelection) {
     this.setState({ loading: true });
 
@@ -187,8 +160,11 @@ export class AttributeComparisonPanel extends SceneObjectBase<AttributeCompariso
 
     const extra = this.getExtraFilters();
 
+    // An explicit id list is the exact selection, but it is inlined into the SQL.
+    // Past MAX_INLINE_TRACE_IDS the box the user drew says the same thing without
+    // shipping a megabyte of literals.
     const traceIdFilter =
-      sel.traceIds && sel.traceIds.length > 0
+      sel.traceIds && sel.traceIds.length > 0 && sel.traceIds.length <= MAX_INLINE_TRACE_IDS
         ? `TraceId IN (${sel.traceIds.map(quoteSqlString).join(', ')})`
         : '';
 
@@ -199,99 +175,121 @@ export class AttributeComparisonPanel extends SceneObjectBase<AttributeCompariso
       timeAndDuration += ` AND Duration >= ${minNano} AND Duration <= ${maxNano}`;
     }
     const selectionPredicate = traceIdFilter || timeAndDuration;
-    const selFilter = `${selectionPredicate}${extra}`;
 
+    // Baseline is the same window minus the selection — never "everything else, ever".
     const tr = sceneGraph.getTimeRange(this).state.value;
     const panelFrom = Math.floor(tr.from.valueOf());
     const panelTo = Math.floor(tr.to.valueOf());
-    const panelTimeFilter = `Timestamp >= fromUnixTimestamp64Milli(${panelFrom}) AND Timestamp <= fromUnixTimestamp64Milli(${panelTo})`;
-    const baseFilter = `${panelTimeFilter} AND NOT (${selectionPredicate})${extra}`;
+    const scopeFilter = `Timestamp >= fromUnixTimestamp64Milli(${panelFrom}) AND Timestamp <= fromUnixTimestamp64Milli(${panelTo})${extra}`;
 
-    const staticAttrs = this.config.attributes ?? [];
-    const attributes = staticAttrs.length > 0
-      ? staticAttrs
-      : await this.discoverAttributes(`${panelTimeFilter}${extra}`);
-
-    const results: ComparisonResult[] = [];
-
-    const promises = attributes.map(async (attr) => {
-      try {
-        const [selDist, baseDist] = await Promise.all([
-          this.queryDistribution(attr.expr, selFilter),
-          this.queryDistribution(attr.expr, baseFilter),
-        ]);
-        return computeComparison(attr.label, baseDist, selDist);
-      } catch (err) {
-        console.error(`Failed to query attribute ${attr.label}:`, err);
-        return computeComparison(attr.label, [], []);
-      }
+    const sql = buildComparisonSql({
+      table: this.table,
+      scopeFilter,
+      selectionPredicate,
+      topLevelColumns: AttributeComparisonPanel.TOP_LEVEL_COLUMNS,
+      valuesPerKey: VALUES_PER_ATTRIBUTE,
     });
 
-    const all = await Promise.all(promises);
-    const meaningful = all.filter((r) => r.highestDiffPct > 0);
-    meaningful.sort((a, b) => b.highestDiffPct - a.highestDiffPct);
-    results.push(...meaningful);
+    let results: ComparisonResult[] = [];
+    try {
+      results = this.toResults(await this.fetchRows(sql));
+    } catch (err) {
+      console.error('Comparison query failed:', err);
+    }
 
     this.setState({ results, loading: false });
   }
 
-  private async queryDistribution(expr: string, whereFilter: string): Promise<ValueDistribution[]> {
-    const table = this.table;
-    const sql = `SELECT
-      ${expr} AS value,
-      count() AS cnt
-    FROM ${table}
-    WHERE ${whereFilter}
-      AND ${expr} != ''
-    GROUP BY value
-    ORDER BY cnt DESC
-    LIMIT 20`;
+  private async fetchRows(sql: string): Promise<ComparisonRow[]> {
+    const response = await lastValueFrom(
+      getBackendSrv().fetch<{ results: Record<string, { frames: Array<{ data: { values: unknown[][] } }> }> }>({
+        url: '/api/ds/query',
+        method: 'POST',
+        data: {
+          queries: [
+            {
+              refId: 'A',
+              datasource: this.config.datasource,
+              rawSql: sql,
+              format: 1,
+              queryType: 'sql',
+            },
+          ],
+          from: '0',
+          to: String(Date.now()),
+        },
+      })
+    );
 
-    try {
-      const response = await lastValueFrom(
-        getBackendSrv().fetch<{ results: Record<string, { frames: Array<{ data: { values: unknown[][] } }> }> }>({
-          url: '/api/ds/query',
-          method: 'POST',
-          data: {
-            queries: [
-              {
-                refId: 'A',
-                datasource: this.config.datasource,
-                rawSql: sql,
-                format: 1,
-                queryType: 'sql',
-              },
-            ],
-            from: '0',
-            to: String(Date.now()),
-          },
-        })
-      );
-
-      const frames = response.data?.results?.A?.frames;
-      if (!frames || frames.length === 0) {
-        return [];
-      }
-
-      const frame = frames[0];
-      const values = frame.data?.values;
-      if (!values || values.length < 2) {
-        return [];
-      }
-
-      const labels = values[0] as string[];
-      const counts = values[1] as number[];
-      const total = counts.reduce((a, b) => a + b, 0);
-
-      return labels.map((v, i) => ({
-        value: String(v),
-        count: counts[i],
-        percentage: total > 0 ? counts[i] / total : 0,
-      }));
-    } catch (err) {
-      console.error('Query failed:', err);
+    const frame = response.data?.results?.A?.frames?.[0];
+    const values = frame?.data?.values;
+    if (!values || values.length < 7) {
       return [];
     }
+
+    const [keys, vals, selCnt, baseCnt, selTotal, baseTotal, distinct] = values as [
+      string[], string[], number[], number[], number[], number[], number[]
+    ];
+
+    return keys.map((key, i) => ({
+      key: String(key),
+      value: String(vals[i]),
+      selCount: Number(selCnt[i]),
+      baseCount: Number(baseCnt[i]),
+      selTotal: Number(selTotal[i]),
+      baseTotal: Number(baseTotal[i]),
+      distinctValues: Number(distinct[i]),
+    }));
+  }
+
+  /** Group the flat rows per attribute, drop identifier-like ones, score the rest. */
+  private toResults(rows: ComparisonRow[]): ComparisonResult[] {
+    const byKey = new Map<string, ComparisonRow[]>();
+    for (const row of rows) {
+      const existing = byKey.get(row.key);
+      if (existing) {
+        existing.push(row);
+      } else {
+        byKey.set(row.key, [row]);
+      }
+    }
+
+    const results: ComparisonResult[] = [];
+    for (const [key, keyRows] of byKey) {
+      const { selTotal, baseTotal, distinctValues } = keyRows[0];
+      if (isHighCardinality(distinctValues, selTotal + baseTotal)) {
+        continue;
+      }
+
+      const selection: ValueDistribution[] = [];
+      const baseline: ValueDistribution[] = [];
+      for (const row of keyRows) {
+        if (row.selCount > 0) {
+          selection.push({
+            value: row.value,
+            count: row.selCount,
+            percentage: selTotal > 0 ? row.selCount / selTotal : 0,
+          });
+        }
+        if (row.baseCount > 0) {
+          baseline.push({
+            value: row.value,
+            count: row.baseCount,
+            percentage: baseTotal > 0 ? row.baseCount / baseTotal : 0,
+          });
+        }
+      }
+
+      const result = computeComparison(key, baseline, selection, {
+        selection: selTotal,
+        baseline: baseTotal,
+      });
+      if (result.score > 0) {
+        results.push(result);
+      }
+    }
+
+    return results.sort((a, b) => b.score - a.score);
   }
 
   public setFilterText(text: string) {
