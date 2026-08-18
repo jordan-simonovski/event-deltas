@@ -12,3 +12,6 @@ __pycache__/
 # Superpowers planning artifacts stay on disk, never in git
 docs/superpowers/
 .superpowers/
+
+# macOS
+.DS_Store
