@@ -24,12 +24,12 @@ configurable is tracked in the repository.
 
 | Page     | Path                                          | What it does                                                                                                             |
 | -------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Explorer | `/a/jordo-event-deltas-app/explorer`       | Latency heatmap in latency or errors mode, box selection, and attribute comparison of the selection against the baseline |
+| Event Deltas | `/a/jordo-event-deltas-app/explorer`       | Latency heatmap in latency or errors mode, box selection, and attribute comparison of the selection against the baseline |
 | Trace    | `/a/jordo-event-deltas-app/trace/:traceId` | Span waterfall for one trace, with error insights                                                                        |
 
 ## Usage
 
-1. Open **Explorer** and pick a time range.
+1. Open **Event Deltas** and pick a time range.
 2. Switch between **Latency** and **Errors** mode.
 3. Drag a box around a band or blob that looks wrong.
 4. Read the attribute comparison: attributes that are far more common inside the

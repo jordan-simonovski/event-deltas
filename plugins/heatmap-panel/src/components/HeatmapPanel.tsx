@@ -596,7 +596,7 @@ export const HeatmapPanel: React.FC<Props> = ({ options, data, width, height, ti
           />
           <MenuItem
             icon="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 .34-.03.67-.08 1h2.02c.03-.33.06-.66.06-1 0-4.42-3.58-8-8-8zM6.08 11H4.06c-.03.33-.06.66-.06 1 0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-.34.03-.67.08-1z"
-            label="Open explorer view"
+            label="Open Event Deltas"
             onClick={handleOpenExplorer}
             theme={theme}
           />

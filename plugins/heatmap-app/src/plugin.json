@@ -35,7 +35,7 @@
   "includes": [
     {
       "type": "page",
-      "name": "Explorer",
+      "name": "Event Deltas",
       "path": "/a/%PLUGIN_ID%/explorer",
       "addToNav": true,
       "defaultNav": true

@@ -222,7 +222,7 @@ export function detailScene(slo: SLODefinition) {
               { label: 'Target', value: `${(slo.target * 100).toFixed(1)}%`, color: 'green' },
             ],
             actions: [
-              { label: 'Heatmap Explorer', onClick: () => locationService.push(heatmapExplorerRoute()) },
+              { label: 'Event Deltas', onClick: () => locationService.push(heatmapExplorerRoute()) },
             ],
           }),
         }),
