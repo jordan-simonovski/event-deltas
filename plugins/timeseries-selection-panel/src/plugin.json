@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
   "name": "Timeseries Selection",
   "id": "jordo-timeseries-selection-panel",
@@ -6,17 +7,33 @@
     "keywords": ["timeseries", "selection", "brush", "comparison"],
     "description": "Timeseries line chart with horizontal brush selection for comparison analysis",
     "author": {
-      "name": "Heatmapbubbles"
+      "name": "Jordan Simonovski",
+      "url": "https://github.com/jordan-simonovski"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/timeseries-selection-panel/README.md"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/timeseries-selection-panel/LICENSE"
+      }
+    ],
+    "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=11.6.0",
+    "grafanaDependency": ">=12.0.0",
     "plugins": []
   }
 }

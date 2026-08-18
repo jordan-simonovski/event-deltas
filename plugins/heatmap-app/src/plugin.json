@@ -7,12 +7,27 @@
     "keywords": ["app", "heatmap", "bubbles", "traces", "latency", "comparison"],
     "description": "Bubbles trace analysis app with heatmap selection and attribute comparison",
     "author": {
-      "name": "Heatmapbubbles"
+      "name": "Jordan Simonovski",
+      "url": "https://github.com/jordan-simonovski"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-app/README.md"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-app/LICENSE"
+      }
+    ],
     "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"
@@ -27,7 +42,7 @@
     }
   ],
   "dependencies": {
-    "grafanaDependency": ">=11.6.0",
+    "grafanaDependency": ">=12.0.0",
     "plugins": []
   }
 }

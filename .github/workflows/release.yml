@@ -49,9 +49,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
-          # Set this repo variable to enable private plugin signing (comma-separated
-          # Grafana instance root URLs). Unset -> unsigned zips are published.
+          # Signing is opt-in via repo variables. GRAFANA_SIGN_ROOT_URLS
+          # (comma-separated Grafana root URLs) = private signature;
+          # GRAFANA_SIGN_CATALOG=true = community signature for the Grafana
+          # catalog. Neither set -> unsigned zips are published.
           GRAFANA_SIGN_ROOT_URLS: ${{ vars.GRAFANA_SIGN_ROOT_URLS }}
+          GRAFANA_SIGN_CATALOG: ${{ vars.GRAFANA_SIGN_CATALOG }}
           GITHUB_REPOSITORY: ${{ github.repository }}
 
       - name: Create Version PR or Publish (Changesets)
@@ -69,4 +72,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GRAFANA_ACCESS_POLICY_TOKEN: ${{ secrets.GRAFANA_ACCESS_POLICY_TOKEN }}
           GRAFANA_SIGN_ROOT_URLS: ${{ vars.GRAFANA_SIGN_ROOT_URLS }}
+          GRAFANA_SIGN_CATALOG: ${{ vars.GRAFANA_SIGN_CATALOG }}
           GITHUB_REPOSITORY: ${{ github.repository }}
