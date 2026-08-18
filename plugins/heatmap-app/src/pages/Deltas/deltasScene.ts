@@ -16,7 +16,8 @@ import {
   VizPanel,
 } from '@grafana/scenes';
 import { locationService } from '@grafana/runtime';
-import { CLICKHOUSE_DS, ROUTES } from '../../constants';
+import { ROUTES } from '../../constants';
+import { getAppConfig } from '../../appConfig';
 import { prefixRoute } from '../../utils/utils.routing';
 import { SelectionState } from '../../components/Deltas/SelectionState';
 import { AttributeComparisonPanel } from '../../components/Deltas/AttributeComparisonPanel';
@@ -41,7 +42,8 @@ function buildHeatmapSql(
   serviceVar: QueryVariable,
   adHocFilters: AdHocFiltersVariable,
   mode: string,
-  maxSamples: number
+  maxSamples: number,
+  tracesTable: string
 ): string {
   const parts: string[] = [];
 
@@ -68,13 +70,14 @@ function buildHeatmapSql(
           Timestamp as timestamp,
           Duration / 1000000 as duration,
           TraceId as traceId${errorCol}
-        FROM otel_traces
+        FROM ${tracesTable}
         WHERE $__timeFilter(Timestamp)${extra}
         ORDER BY cityHash64(TraceId)
         LIMIT ${maxSamples}`;
 }
 
 export function deltasScene(view: WorkbenchView = 'explorer') {
+  const { datasource: CLICKHOUSE_DS, tracesTable } = getAppConfig();
   const timeRange = new SceneTimeRange({
     from: 'now-15m',
     to: 'now',
@@ -85,7 +88,7 @@ export function deltasScene(view: WorkbenchView = 'explorer') {
     label: 'Service',
     datasource: CLICKHOUSE_DS,
     query: {
-      rawSql: `SELECT DISTINCT ServiceName FROM otel_traces WHERE ServiceName != '' ORDER BY ServiceName`,
+      rawSql: `SELECT DISTINCT ServiceName FROM ${tracesTable} WHERE ServiceName != '' ORDER BY ServiceName`,
       format: 1,
       queryType: 'sql',
       refId: 'serviceVar',
@@ -127,7 +130,7 @@ export function deltasScene(view: WorkbenchView = 'explorer') {
       {
         refId: 'heatmap',
         datasource: CLICKHOUSE_DS,
-        rawSql: buildHeatmapSql(serviceVar, adHocFilters, currentMode(), currentSamples()),
+        rawSql: buildHeatmapSql(serviceVar, adHocFilters, currentMode(), currentSamples(), tracesTable),
         format: 1,
         queryType: 'sql',
       },
@@ -136,7 +139,7 @@ export function deltasScene(view: WorkbenchView = 'explorer') {
   });
 
   function refreshHeatmapQuery() {
-    const newSql = buildHeatmapSql(serviceVar, adHocFilters, currentMode(), currentSamples());
+    const newSql = buildHeatmapSql(serviceVar, adHocFilters, currentMode(), currentSamples(), tracesTable);
     const current = heatmapQuery.state.queries[0];
     if ((current as any).rawSql === newSql) {
       return;
@@ -191,9 +194,11 @@ export function deltasScene(view: WorkbenchView = 'explorer') {
   const selectionState = new SelectionState();
   const comparisonPanel = new AttributeComparisonPanel({
     datasource: CLICKHOUSE_DS,
+    tracesTable,
   });
   const representativeTracesPanel = new RepresentativeTracesPanel({
     datasource: CLICKHOUSE_DS,
+    tracesTable,
     maxTraces: 10,
     onTraceSelect: (traceId) => {
       locationService.push(prefixRoute(`${ROUTES.Trace}/${encodeURIComponent(traceId)}`));

@@ -1,153 +1,98 @@
-import React, { useState, ChangeEvent } from 'react';
-import { Button, Field, Input, useStyles2, FieldSet, SecretInput } from '@grafana/ui';
-import { PluginConfigPageProps, AppPluginMeta, PluginMeta, GrafanaTheme2 } from '@grafana/data';
-import { getBackendSrv, locationService } from '@grafana/runtime';
+import React, { ChangeEvent, useState } from 'react';
+import { Button, Field, FieldSet, Input, useStyles2 } from '@grafana/ui';
+import { AppPluginMeta, GrafanaTheme2, PluginConfigPageProps, PluginMeta } from '@grafana/data';
+import { DataSourcePicker, getBackendSrv, locationService } from '@grafana/runtime';
 import { css } from '@emotion/css';
-import { testIds } from '../testIds';
 import { lastValueFrom } from 'rxjs';
+import {
+  CLICKHOUSE_DS_TYPE,
+  DEFAULT_DATASOURCE_UID,
+  DEFAULT_TRACES_TABLE,
+  EventDeltasJsonData,
+} from '../../appConfig';
 
-type JsonData = {
-  apiUrl?: string;
-  isApiKeySet?: boolean;
-};
-
-type State = {
-  // The URL to reach our custom API.
-  apiUrl: string;
-  // Tells us if the API key secret is set.
-  // Set to `true` ONLY if it has already been set and haven't been changed.
-  // (We unfortunately need an auxiliray variable for this, as `secureJsonData` is never exposed to the browser after it is set)
-  isApiKeySet: boolean;
-  // An secret key for our custom API.
-  apiKey: string;
-};
-
-export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<JsonData>> {}
+export interface AppConfigProps extends PluginConfigPageProps<AppPluginMeta<EventDeltasJsonData>> {}
 
 const AppConfig = ({ plugin }: AppConfigProps) => {
   const s = useStyles2(getStyles);
   const { enabled, pinned, jsonData } = plugin.meta;
-  const [state, setState] = useState<State>({
-    apiUrl: jsonData?.apiUrl || '',
-    apiKey: '',
-    isApiKeySet: Boolean(jsonData?.isApiKeySet),
-  });
 
-  const isSubmitDisabled = Boolean(!state.apiUrl || (!state.isApiKeySet && !state.apiKey));
+  const [datasourceUid, setDatasourceUid] = useState(jsonData?.datasourceUid ?? DEFAULT_DATASOURCE_UID);
+  const [tracesTable, setTracesTable] = useState(jsonData?.tracesTable ?? DEFAULT_TRACES_TABLE);
 
-  const onResetApiKey = () =>
-    setState({
-      ...state,
-      apiKey: '',
-      isApiKeySet: false,
-    });
-
-  const onChangeApiKey = (event: ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      apiKey: event.target.value.trim(),
-    });
-  };
-
-  const onChangeApiUrl = (event: ChangeEvent<HTMLInputElement>) => {
-    setState({
-      ...state,
-      apiUrl: event.target.value.trim(),
-    });
+  const onChangeTracesTable = (event: ChangeEvent<HTMLInputElement>) => {
+    setTracesTable(event.target.value.trim());
   };
 
   const onSubmit = () => {
     updatePluginAndReload(plugin.meta.id, {
       enabled,
       pinned,
-      jsonData: {
-        apiUrl: state.apiUrl,
-        isApiKeySet: true,
-      },
-      // This cannot be queried later by the frontend.
-      // We don't want to override it in case it was set previously and left untouched now.
-      secureJsonData: state.isApiKeySet
-        ? undefined
-        : {
-            apiKey: state.apiKey,
-          },
+      jsonData: { datasourceUid, tracesTable },
     });
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <FieldSet label="API Settings" className={s.marginTopXl}>
-        {/* API Key */}
-        <Field label="API Key" description="A secret key for authenticating to our custom API">
-          <SecretInput
-            width={60}
-            data-testid={testIds.appConfig.apiKey}
-            id="api-key"
-            value={state?.apiKey}
-            isConfigured={state.isApiKeySet}
-            placeholder={'Your secret API key'}
-            onChange={onChangeApiKey}
-            onReset={onResetApiKey}
+    <div className={s.container}>
+      <FieldSet label="Trace data">
+        <Field
+          label="Data source"
+          description="The ClickHouse data source holding your OpenTelemetry spans."
+        >
+          <DataSourcePicker
+            current={datasourceUid}
+            filter={(ds) => ds.type === CLICKHOUSE_DS_TYPE}
+            onChange={(ds) => setDatasourceUid(ds.uid)}
+            width={40}
+            noDefault
           />
         </Field>
 
-        {/* API Url */}
-        <Field label="API Url" description="" className={s.marginTop}>
+        <Field
+          label="Traces table"
+          description="Table of OpenTelemetry spans, as written by the collector's ClickHouse exporter. Qualify it as database.table if the data source's default database is not the right one."
+        >
           <Input
-            width={60}
-            id="api-url"
-            data-testid={testIds.appConfig.apiUrl}
-            label={`API Url`}
-            value={state?.apiUrl}
-            placeholder={`E.g.: http://mywebsite.com/api/v1`}
-            onChange={onChangeApiUrl}
+            width={40}
+            value={tracesTable}
+            placeholder={DEFAULT_TRACES_TABLE}
+            onChange={onChangeTracesTable}
           />
         </Field>
 
-        <div className={s.marginTop}>
-          <Button type="submit" data-testid={testIds.appConfig.submit} disabled={isSubmitDisabled}>
-            Save API settings
-          </Button>
-        </div>
+        <Button type="submit" onClick={onSubmit} disabled={!datasourceUid || !tracesTable}>
+          Save settings
+        </Button>
       </FieldSet>
-    </form>
+    </div>
   );
 };
 
 export default AppConfig;
 
 const getStyles = (theme: GrafanaTheme2) => ({
-  colorWeak: css`
-    color: ${theme.colors.text.secondary};
-  `,
-  marginTop: css`
-    margin-top: ${theme.spacing(3)};
-  `,
-  marginTopXl: css`
-    margin-top: ${theme.spacing(6)};
-  `,
+  container: css({
+    padding: theme.spacing(3),
+    maxWidth: 640,
+  }),
 });
 
-const updatePluginAndReload = async (pluginId: string, data: Partial<PluginMeta<JsonData>>) => {
+const updatePluginAndReload = async (
+  pluginId: string,
+  data: Partial<PluginMeta<EventDeltasJsonData>>
+) => {
   try {
-    await updatePlugin(pluginId, data);
-
-    // Reloading the page as the changes made here wouldn't be propagated to the actual plugin otherwise.
-    // This is not ideal, however unfortunately currently there is no supported way for updating the plugin state.
+    await lastValueFrom(
+      getBackendSrv().fetch({
+        url: `/api/plugins/${pluginId}/settings`,
+        method: 'POST',
+        data,
+      })
+    );
+    // Settings are read once when the app mounts, so the page has to come back
+    // for a change to take effect.
     locationService.reload();
   } catch (e) {
     console.error('Error while updating the plugin', e);
   }
-};
-
-const updatePlugin = async (pluginId: string, data: Partial<PluginMeta>) => {
-  const response = getBackendSrv().fetch({
-    url: `/api/plugins/${pluginId}/settings`,
-    method: 'POST',
-    data,
-  });
-
-  const dataResponse = await lastValueFrom(response);
-
-  return dataResponse.data;
 };

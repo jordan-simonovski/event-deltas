@@ -7,7 +7,7 @@ import {
   VizPanel,
 } from '@grafana/scenes';
 import { escapeSql } from '@heatmap/shared-comparison';
-import { CLICKHOUSE_DS } from '../../constants';
+import { getAppConfig } from '../../appConfig';
 import { ErrorInsightsDrawer } from './ErrorInsightsDrawer';
 
 function buildTraceWaterfallSql(traceId: string): string {
@@ -42,7 +42,7 @@ function buildTraceWaterfallSql(traceId: string): string {
     "SpanKind" as kind,
     "StatusMessage" as statusMessage,
     "TraceState" as traceState
-  FROM "default"."otel_traces"
+  FROM ${getAppConfig().tracesTable}
   WHERE traceID = '${escapedTraceId}'
   LIMIT 1000`;
 }
@@ -62,7 +62,7 @@ function buildTraceSpansSql(traceId: string): string {
     ServiceName AS dependentService,
     SpanName AS dependentCall,
     count() AS occurrences
-  FROM otel_traces
+  FROM ${getAppConfig().tracesTable}
   WHERE TraceId = '${escapedTraceId}'
     AND (StatusCode IN ('Error', 'STATUS_CODE_ERROR') OR indexOf("Events".Name, 'exception') > 0)
   GROUP BY errorMessage, errorType, dependentService, dependentCall
@@ -72,11 +72,11 @@ function buildTraceSpansSql(traceId: string): string {
 
 export function traceScene(traceId: string) {
   const waterfallQuery = new SceneQueryRunner({
-    datasource: CLICKHOUSE_DS,
+    datasource: getAppConfig().datasource,
     queries: [
       {
         refId: 'trace',
-        datasource: CLICKHOUSE_DS,
+        datasource: getAppConfig().datasource,
         queryType: 'sql',
         rawSql: buildTraceWaterfallSql(traceId),
         format: 1,
@@ -85,11 +85,11 @@ export function traceScene(traceId: string) {
   });
 
   const spansQuery = new SceneQueryRunner({
-    datasource: CLICKHOUSE_DS,
+    datasource: getAppConfig().datasource,
     queries: [
       {
         refId: 'spans',
-        datasource: CLICKHOUSE_DS,
+        datasource: getAppConfig().datasource,
         rawSql: buildTraceSpansSql(traceId),
         format: 1,
         queryType: 'sql',

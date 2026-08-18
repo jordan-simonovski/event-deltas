@@ -4,6 +4,7 @@ import { AppPlugin, type AppRootProps } from '@grafana/data';
 import { LoadingPlaceholder } from '@grafana/ui';
 import type { AppConfigProps } from './components/AppConfig/AppConfig';
 import pluginJson from 'plugin.json';
+import type { EventDeltasJsonData } from './appConfig';
 
 await initPluginTranslations(pluginJson.id);
 
@@ -22,7 +23,7 @@ const AppConfig = (props: AppConfigProps) => (
   </Suspense>
 );
 
-export const plugin = new AppPlugin<{}>().setRootPage(App).addConfigPage({
+export const plugin = new AppPlugin<EventDeltasJsonData>().setRootPage(App).addConfigPage({
   title: 'Configuration',
   icon: 'cog',
   body: AppConfig,
