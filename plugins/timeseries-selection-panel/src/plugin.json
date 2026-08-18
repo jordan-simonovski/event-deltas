@@ -28,7 +28,12 @@
         "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/timeseries-selection-panel/LICENSE"
       }
     ],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Brush selection driving attribute comparison",
+        "path": "img/demo.gif"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },

@@ -14,13 +14,8 @@ Three of the four:
 |---|---|---|
 | `jordo-event-deltas-panel` | yes | |
 | `jordo-event-deltas-app` | yes | |
-| `jordo-timeseries-selection-panel` | yes | Going in without screenshots |
+| `jordo-timeseries-selection-panel` | yes | |
 | `jordo-slo-app` | not yet | A reviewer cannot exercise it without the Go control plane running alongside Grafana |
-
-The timeseries panel ships with an empty `info.screenshots`, so its catalog page
-shows the logo and the README and nothing else. Grafana lists screenshots under
-required metadata, so expect review to ask; one capture of a brush selection
-with the context menu open is enough to close it out.
 
 The SLO app is catalog-ready apart from screenshots and can be submitted later
 without further work.
@@ -54,9 +49,9 @@ without a token makes the publish script exit rather than publish unsigned.
 
 ### 2. Screenshots (done)
 
-`img/demo.gif` on the app, `img/selection.png` and `img/panel.png` on the
-heatmap panel. The timeseries panel is going in deliberately without one; the
-SLO app needs one if it is ever submitted. Drop PNGs into `plugins/<plugin>/src/img/` and list
+`img/demo.gif` on the Event Deltas app, `img/selection.png` and `img/panel.png`
+on the heatmap panel, `img/demo.gif` on the timeseries panel. The SLO app needs
+one if it is ever submitted. Drop PNGs into `plugins/<plugin>/src/img/` and list
 them:
 
 ```json
