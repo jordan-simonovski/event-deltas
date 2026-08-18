@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.1
+
+### Patch Changes
+
+- [#70](https://github.com/jordan-simonovski/event-deltas/pull/70) [`d1e2d73`](https://github.com/jordan-simonovski/event-deltas/commit/d1e2d738b2d96754ef2890a71bb47ad384298b9a) Thanks [@jordan-simonovski](https://github.com/jordan-simonovski)! - Point the catalog links at the repository's current name. It was renamed to
+  `event-deltas`; the old links redirect, but the catalog page and the plugin
+  submission's source URL should be canonical.
+
 ## 2.0.0
 
 ### Major Changes
