@@ -6,12 +6,19 @@ manual submission per plugin. This is what is done, and what still needs doing.
 The catalog is the free listing. The Grafana Marketplace is the paid track with
 its own review and terms — not relevant here, these are Apache-2.0.
 
-## Submission order
+## What we are submitting
 
-Submit the two panels and the Event Deltas App first. The SLO Analysis App
-is deferred: a reviewer cannot exercise it without the Go control plane running
-alongside Grafana, which makes it the slowest of the four to get through review.
-Its metadata and README are catalog-ready either way.
+Two of the four, for now:
+
+| Plugin | Submitting | Why |
+|---|---|---|
+| `jordo-event-deltas-panel` | yes | |
+| `jordo-event-deltas-app` | yes | |
+| `jordo-slo-app` | not yet | A reviewer cannot exercise it without the Go control plane running alongside Grafana |
+| `jordo-timeseries-selection-panel` | no | Not being published |
+
+The two we are holding back are catalog-ready apart from screenshots, so either
+can be submitted later without further work.
 
 ## Done in this repo
 
@@ -35,11 +42,11 @@ Cloud org with the slug `jordo`, or rename all four IDs — a rename touches the
 docker-compose allowlist, `constants.ts`, provisioning, docs, and breaks any
 existing install, so decide before the first catalog release.
 
-### 2. Screenshots
+### 2. Screenshots (done)
 
-`info.screenshots` is empty in all four manifests. The catalog page needs at
-least one image per plugin (the SLO Analysis App can wait, see submission order
-above). Drop PNGs into `plugins/<plugin>/src/img/` and list
+Done for the two we are submitting: `img/demo.gif` on the app, `img/selection.png`
+and `img/panel.png` on the panel. The SLO app still needs one if it is ever
+submitted. Drop PNGs into `plugins/<plugin>/src/img/` and list
 them:
 
 ```json
