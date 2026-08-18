@@ -34,7 +34,7 @@ and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 
 ```
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-timeseries-selection-panel
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-timeseries-panel
 ```
 
 ## Development

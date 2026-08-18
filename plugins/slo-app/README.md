@@ -15,7 +15,7 @@ burning requests have in common.
 - The [ClickHouse data source](https://grafana.com/grafana/plugins/grafana-clickhouse-datasource/),
   provisioned with the UID `clickhouse`, holding OpenTelemetry trace data in an
   `otel_traces` table.
-- Optional: the Event Deltas App (`jordo-event-deltas-app`) for trace
+- Optional: the Event Deltas App (`jordo-eventdeltas-app`) for trace
   drilldown from an investigation.
 
 ## Pages

@@ -63,13 +63,13 @@
     "grafanaDependency": ">=12.0.0",
     "plugins": [
       {
-        "id": "jordo-event-deltas-panel",
+        "id": "jordo-eventdeltas-panel",
         "name": "Event Deltas",
         "type": "panel",
         "version": ">=2.0.0"
       },
       {
-        "id": "jordo-timeseries-selection-panel",
+        "id": "jordo-timeseries-panel",
         "name": "Timeseries Selection",
         "type": "panel",
         "version": ">=2.0.0"

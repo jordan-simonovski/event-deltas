@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "app",
   "name": "Event Deltas App",
-  "id": "jordo-event-deltas-app",
+  "id": "jordo-eventdeltas-app",
   "info": {
     "keywords": ["app", "heatmap", "deltas", "traces", "latency", "comparison"],
     "description": "Event Deltas trace analysis app with heatmap selection and attribute comparison",
@@ -50,7 +50,7 @@
     "grafanaDependency": ">=12.0.0",
     "plugins": [
       {
-        "id": "jordo-event-deltas-panel",
+        "id": "jordo-eventdeltas-panel",
         "name": "Event Deltas",
         "type": "panel",
         "version": ">=2.0.0"

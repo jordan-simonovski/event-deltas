@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
   "name": "Event Deltas",
-  "id": "jordo-event-deltas-panel",
+  "id": "jordo-eventdeltas-panel",
   "info": {
     "keywords": ["panel", "heatmap", "deltas", "traces", "latency"],
     "description": "Heatmap panel with box selection for Event Deltas trace analysis",

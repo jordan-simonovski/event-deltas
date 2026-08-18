@@ -31,7 +31,7 @@ Each plugin is published as a zip on [GitHub Releases](https://github.com/jordan
 ```bash
 # Download and extract into Grafana's plugin directory.
 # Pick a version from the releases page; the tag is <plugin-id>-v<version>.
-PLUGIN=jordo-event-deltas-panel
+PLUGIN=jordo-eventdeltas-panel
 VERSION=2.0.0
 cd /var/lib/grafana/plugins
 curl -fsSLO "https://github.com/jordan-simonovski/event-deltas/releases/download/$PLUGIN-v$VERSION/$PLUGIN-$VERSION.zip"
@@ -42,13 +42,13 @@ Then allow the unsigned plugins and restart Grafana — either in `grafana.ini`:
 
 ```ini
 [plugins]
-allow_loading_unsigned_plugins = jordo-event-deltas-panel,jordo-timeseries-selection-panel,jordo-event-deltas-app,jordo-slo-app
+allow_loading_unsigned_plugins = jordo-eventdeltas-panel,jordo-timeseries-panel,jordo-eventdeltas-app,jordo-slo-app
 ```
 
 or as an environment variable (how `docker/docker-compose.yml` does it):
 
 ```bash
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-event-deltas-panel,jordo-timeseries-selection-panel,jordo-event-deltas-app,jordo-slo-app
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-eventdeltas-panel,jordo-timeseries-panel,jordo-eventdeltas-app,jordo-slo-app
 ```
 
 Note: unsigned plugins can't be loaded on Grafana Cloud. To run there, sign the zips privately by setting the `GRAFANA_SIGN_ROOT_URLS` repo variable (comma-separated instance root URLs, e.g. `https://myorg.grafana.net`) before the release is published — the release workflow then produces signed zips scoped to those instances.

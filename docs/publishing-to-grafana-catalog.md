@@ -12,9 +12,9 @@ Three of the four:
 
 | Plugin | Submitting | Notes |
 |---|---|---|
-| `jordo-event-deltas-panel` | yes | |
-| `jordo-event-deltas-app` | yes | |
-| `jordo-timeseries-selection-panel` | yes | |
+| `jordo-eventdeltas-panel` | yes | |
+| `jordo-eventdeltas-app` | yes | |
+| `jordo-timeseries-panel` | yes | |
 | `jordo-slo-app` | not yet | A reviewer cannot exercise it without the Go control plane running alongside Grafana |
 
 The SLO app is catalog-ready apart from screenshots and can be submitted later

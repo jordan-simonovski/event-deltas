@@ -18,7 +18,7 @@ export const routeFor = {
   slo: (sloId: string) => `slo/${sloId}`,
 };
 
-export const EVENT_DELTAS_APP_ID = 'jordo-event-deltas-app';
+export const EVENT_DELTAS_APP_ID = 'jordo-eventdeltas-app';
 
 export const CLICKHOUSE_DS = {
   uid: 'clickhouse',
