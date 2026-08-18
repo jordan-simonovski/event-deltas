@@ -24,8 +24,8 @@ configurable is tracked in the repository.
 
 | Page     | Path                                          | What it does                                                                                                             |
 | -------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Event Deltas | `/a/jordo-event-deltas-app/explorer`       | Latency heatmap in latency or errors mode, box selection, and attribute comparison of the selection against the baseline |
-| Trace    | `/a/jordo-event-deltas-app/trace/:traceId` | Span waterfall for one trace, with error insights                                                                        |
+| Event Deltas | `/a/jordo-eventdeltas-app/explorer`       | Latency heatmap in latency or errors mode, box selection, and attribute comparison of the selection against the baseline |
+| Trace    | `/a/jordo-eventdeltas-app/trace/:traceId` | Span waterfall for one trace, with error insights                                                                        |
 
 ## Usage
 
@@ -47,7 +47,7 @@ and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 
 ```
-GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-event-deltas-app
+GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=jordo-eventdeltas-app
 ```
 
 ## Development

@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
   "name": "Timeseries Selection",
-  "id": "jordo-timeseries-selection-panel",
+  "id": "jordo-timeseries-panel",
   "info": {
     "keywords": ["timeseries", "selection", "brush", "comparison"],
     "description": "Timeseries line chart with horizontal brush selection for comparison analysis",

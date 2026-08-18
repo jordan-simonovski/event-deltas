@@ -51,7 +51,7 @@
         }
       ],
       "title": "Sample Panel Title",
-      "type": "jordo-event-deltas-panel"
+      "type": "jordo-eventdeltas-panel"
     },
     {
       "datasource": {
@@ -82,7 +82,7 @@
         }
       ],
       "title": "Sample Panel Title",
-      "type": "jordo-event-deltas-panel"
+      "type": "jordo-eventdeltas-panel"
     }
   ],
   "refresh": "",

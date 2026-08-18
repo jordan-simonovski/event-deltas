@@ -308,7 +308,7 @@ export function deltasScene(view: WorkbenchView = 'explorer') {
 
   const heatmapVizPanel = new VizPanel({
     title: PANEL_TITLES[currentMode()] ?? PANEL_TITLES.latency,
-    pluginId: 'jordo-event-deltas-panel',
+    pluginId: 'jordo-eventdeltas-panel',
     options: {
       yAxisScale: 'log',
       colorScheme: 'blues',

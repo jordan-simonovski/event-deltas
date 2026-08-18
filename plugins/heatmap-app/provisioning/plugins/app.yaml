@@ -1,6 +1,6 @@
 apiVersion: 1
 
 apps:
-  - type: 'jordo-event-deltas-app'
+  - type: 'jordo-eventdeltas-app'
     org_id: 1
     disabled: false
