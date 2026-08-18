@@ -28,7 +28,12 @@
         "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-app/LICENSE"
       }
     ],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Selecting an outlier region and comparing it to baseline",
+        "path": "img/demo.gif"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },

@@ -28,7 +28,16 @@
         "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-panel/LICENSE"
       }
     ],
-    "screenshots": [],
+    "screenshots": [
+      {
+        "name": "Box selection over a latency cluster",
+        "path": "img/selection.png"
+      },
+      {
+        "name": "Latency heatmap panel",
+        "path": "img/panel.png"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
