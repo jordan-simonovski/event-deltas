@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.0.0
+
+### Major Changes
+
+- [#68](https://github.com/jordan-simonovski/event-deltas/pull/68) [`f95dc75`](https://github.com/jordan-simonovski/event-deltas/commit/f95dc751cd2a21dab9246f021aa749cfb28d8b3f) Thanks [@jordan-simonovski](https://github.com/jordan-simonovski)! - Rename Heatmap Bubbles to Event Deltas. "Bubbles" read as the bubble-up
+  technique rather than a product name.
+
+  This is breaking. Plugin IDs change (`jordo-heatmap-bubbles-panel` ->
+  `jordo-event-deltas-panel`, `jordo-heatmap-bubbles-app` ->
+  `jordo-event-deltas-app`, `jordo-slo-bubbles-app` -> `jordo-slo-app`), so app
+  URLs move, the unsigned-plugin allowlist needs updating, and dashboards that
+  reference the old panel type will not resolve it. The cross-plugin selection
+  event channel also changes from `heatmap-bubbles-selection` to
+  `event-deltas-selection`, so all four plugins must be upgraded together.
+
+### Minor Changes
+
+- [#68](https://github.com/jordan-simonovski/event-deltas/pull/68) [`4486b33`](https://github.com/jordan-simonovski/event-deltas/commit/4486b337845fcee6c30f28ceb075f8587852214c) Thanks [@jordan-simonovski](https://github.com/jordan-simonovski)! - Prepare the plugins for Grafana catalog submission: real author, catalog links
+  and screenshots in plugin.json, a proper README per plugin, and
+  `grafanaDependency` raised
+  to `>=12.0.0` to match the `@grafana/*` 12.3 dependencies the plugins are
+  actually built and tested against.
+
 ## 1.0.3
 
 ### Patch Changes
