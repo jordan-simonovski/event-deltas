@@ -31,16 +31,21 @@ can be submitted later without further work.
 - `scripts/publish-plugins.sh` writes a `.sha1` next to the `.md5` (the
   submission form asks for SHA1) and supports community signing via
   `GRAFANA_SIGN_CATALOG=true`.
+- The `jordo` Grafana Cloud org slug exists, so the plugin IDs are already in
+  the required `<org-slug>-<name>-<type>` shape and no rename is needed.
 
 ## Still to do
 
-### 1. Own the `jordo` prefix
+### 1. Check the signing token belongs to the `jordo` org
 
-A plugin ID must be `<grafana-cloud-org-slug>-<name>-<type>`, and the Access
-Policy token used to sign must belong to that org. Either register a Grafana
-Cloud org with the slug `jordo`, or rename all four IDs — a rename touches the
-docker-compose allowlist, `constants.ts`, provisioning, docs, and breaks any
-existing install, so decide before the first catalog release.
+The repo already has a `GRAFANA_ACCESS_POLICY_TOKEN` secret, but it dates from
+March 2026 — created while catalog signing was still failing with HTTP 409
+because no org owned the prefix. Confirm it was issued by the `jordo` org with
+scope `plugins:write`, and rotate it if not: a token from the wrong org fails
+the same way the old one did.
+
+Order matters. Set the token first, then the variable — `GRAFANA_SIGN_CATALOG`
+without a token makes the publish script exit rather than publish unsigned.
 
 ### 2. Screenshots (done)
 
@@ -58,11 +63,12 @@ capture the workflow, not an empty panel.
 
 ### 3. Sign
 
-Create an Access Policy token in Grafana Cloud (**My Account > Security >
-Access Policies**, scope `plugins:write`), store it as the
-`GRAFANA_ACCESS_POLICY_TOKEN` repo secret, and set the repo variable
-`GRAFANA_SIGN_CATALOG=true`. The next release will produce signed zips. An
-HTTP 409 means the token's org does not own the ID prefix — see step 1.
+Set the repo variable `GRAFANA_SIGN_CATALOG=true` and the next release produces
+community-signed zips. An HTTP 409 still means the token's org does not own the
+ID prefix — see step 1.
+
+Signing a plugin the catalog has never seen is fine: the signature is what the
+submission is reviewed against.
 
 ### 4. Validate
 
