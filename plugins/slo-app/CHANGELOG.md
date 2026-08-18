@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.0.3
+
+### Patch Changes
+
+- [#78](https://github.com/jordan-simonovski/event-deltas/pull/78) [`512f4ab`](https://github.com/jordan-simonovski/event-deltas/commit/512f4abe1cb3804e001a242db29b727696d75358) Thanks [@jordan-simonovski](https://github.com/jordan-simonovski)! - Fix the licence and README problems that failed automated catalog submission.
+
+  `timeseries-selection-panel` and `slo-app` shipped a LICENSE file containing
+  the single line "Apache License 2.0" rather than the licence, which the
+  validator could not parse. All four still had the Apache template's
+  `{yyyy} {name of copyright owner}` placeholder, and their READMEs linked the
+  licence relatively, which does not resolve on a catalog page.
+
 ## 2.0.2
 
 ### Patch Changes

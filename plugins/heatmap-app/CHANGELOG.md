@@ -1,5 +1,30 @@
 # Changelog
 
+## 3.1.0
+
+### Minor Changes
+
+- [#77](https://github.com/jordan-simonovski/event-deltas/pull/77) [`c43f315`](https://github.com/jordan-simonovski/event-deltas/commit/c43f3150a1c1c86b42d38c32b70683ced3ece59e) Thanks [@jordan-simonovski](https://github.com/jordan-simonovski)! - Make the data source and traces table configurable.
+
+  The app hardcoded a data source UID of `clickhouse` and a table of
+  `otel_traces`, so it only worked against a Grafana provisioned exactly like the
+  bundled demo stack. Both are now settings on the app's configuration page, with
+  those same values as defaults — an existing install behaves identically without
+  being touched.
+
+  Replaces the scaffold configuration page, which asked for an API URL and API key
+  the app never read.
+
+### Patch Changes
+
+- [#78](https://github.com/jordan-simonovski/event-deltas/pull/78) [`512f4ab`](https://github.com/jordan-simonovski/event-deltas/commit/512f4abe1cb3804e001a242db29b727696d75358) Thanks [@jordan-simonovski](https://github.com/jordan-simonovski)! - Fix the licence and README problems that failed automated catalog submission.
+
+  `timeseries-selection-panel` and `slo-app` shipped a LICENSE file containing
+  the single line "Apache License 2.0" rather than the licence, which the
+  validator could not parse. All four still had the Apache template's
+  `{yyyy} {name of copyright owner}` placeholder, and their READMEs linked the
+  licence relatively, which does not resolve on a catalog page.
+
 ## 3.0.0
 
 ### Major Changes
