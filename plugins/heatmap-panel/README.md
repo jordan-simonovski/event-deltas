@@ -39,7 +39,7 @@ consumes those events to show what is different about the selected traces.
 
 ## Installation
 
-Download the zip from the [releases page](https://github.com/jordan-simonovski/heatmap-investigation/releases)
+Download the zip from the [releases page](https://github.com/jordan-simonovski/event-deltas/releases)
 and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 

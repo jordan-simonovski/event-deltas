@@ -8,7 +8,7 @@ burning requests have in common.
 ## Requirements
 
 - Grafana 12.0 or later.
-- The [SLO control plane](https://github.com/jordan-simonovski/heatmap-investigation/tree/main/services/slo-control-plane),
+- The [SLO control plane](https://github.com/jordan-simonovski/event-deltas/tree/main/services/slo-control-plane),
   a standalone Go service that stores SLO definitions and evaluates burn rate.
   Set its base URL in the app's configuration page (default
   `http://localhost:8080`).
@@ -37,7 +37,7 @@ URL must be reachable from the user's browser, not just from the Grafana server.
 
 ## Installation
 
-Download the zip from the [releases page](https://github.com/jordan-simonovski/heatmap-investigation/releases)
+Download the zip from the [releases page](https://github.com/jordan-simonovski/event-deltas/releases)
 and unzip it into Grafana's plugin directory. Until the plugin is signed, allow
 it to load:
 

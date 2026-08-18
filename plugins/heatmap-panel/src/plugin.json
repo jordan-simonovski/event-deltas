@@ -17,15 +17,15 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/jordan-simonovski/heatmap-investigation"
+        "url": "https://github.com/jordan-simonovski/event-deltas"
       },
       {
         "name": "Documentation",
-        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-panel/README.md"
+        "url": "https://github.com/jordan-simonovski/event-deltas/blob/main/plugins/heatmap-panel/README.md"
       },
       {
         "name": "License",
-        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-panel/LICENSE"
+        "url": "https://github.com/jordan-simonovski/event-deltas/blob/main/plugins/heatmap-panel/LICENSE"
       }
     ],
     "screenshots": [

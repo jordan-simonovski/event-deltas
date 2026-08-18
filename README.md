@@ -26,7 +26,7 @@ Open http://localhost:3000 and navigate to the Event Deltas App or SLO Analysis 
 
 ## Installing the Plugins
 
-Each plugin is published as a zip on [GitHub Releases](https://github.com/jordan-simonovski/heatmap-investigation/releases), tagged `<plugin-id>-v<version>`. The zips are unsigned, so Grafana must allowlist the plugin IDs.
+Each plugin is published as a zip on [GitHub Releases](https://github.com/jordan-simonovski/event-deltas/releases), tagged `<plugin-id>-v<version>`. The zips are unsigned, so Grafana must allowlist the plugin IDs.
 
 ```bash
 # Download and extract into Grafana's plugin directory.
@@ -34,7 +34,7 @@ Each plugin is published as a zip on [GitHub Releases](https://github.com/jordan
 PLUGIN=jordo-event-deltas-panel
 VERSION=2.0.0
 cd /var/lib/grafana/plugins
-curl -fsSLO "https://github.com/jordan-simonovski/heatmap-investigation/releases/download/$PLUGIN-v$VERSION/$PLUGIN-$VERSION.zip"
+curl -fsSLO "https://github.com/jordan-simonovski/event-deltas/releases/download/$PLUGIN-v$VERSION/$PLUGIN-$VERSION.zip"
 unzip "$PLUGIN-$VERSION.zip" && rm "$PLUGIN-$VERSION.zip"
 ```
 
