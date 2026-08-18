@@ -15,3 +15,7 @@ docs/superpowers/
 
 # macOS
 .DS_Store
+
+# make up writes a live Grafana service-account token in here every run.
+# bootstrap-grafana-token creates it from scratch, so nothing needs a template.
+docker/.env.slo
