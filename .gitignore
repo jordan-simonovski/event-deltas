@@ -9,3 +9,6 @@ trace-generator/bin
 __pycache__/
 *.pyc
 .eslintcache
+# Superpowers planning artifacts stay on disk, never in git
+docs/superpowers/
+.superpowers/
