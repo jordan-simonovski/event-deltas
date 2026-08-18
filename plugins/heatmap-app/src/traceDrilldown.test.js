@@ -4,7 +4,7 @@ global.IntersectionObserver = class IntersectionObserver {
   disconnect() {}
 };
 
-const { explorerPage } = require('./pages/Bubbles/bubblesPage');
+const { explorerPage } = require('./pages/Deltas/deltasPage');
 const { tracePage } = require('./pages/Trace/tracePage');
 const { prefixRoute } = require('./utils/utils.routing');
 const { ROUTES } = require('./constants');

@@ -20,7 +20,7 @@ build-panel: ## Build the heatmap panel plugin
 build-timeseries: ## Build the timeseries selection panel plugin
 	npm run build --workspace=plugins/timeseries-selection-panel
 
-build-app: ## Build the Bubbles Scenes app plugin
+build-app: ## Build the Event Deltas Scenes app plugin
 	npm run build --workspace=plugins/heatmap-app
 
 build-slo: ## Build the SLO Scenes app plugin

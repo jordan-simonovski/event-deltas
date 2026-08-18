@@ -1,25 +1,48 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "panel",
-  "name": "Heatmap Bubbles",
-  "id": "jordo-heatmap-bubbles-panel",
+  "name": "Event Deltas",
+  "id": "jordo-event-deltas-panel",
   "info": {
-    "keywords": ["panel", "heatmap", "bubbles", "traces", "latency"],
-    "description": "Heatmap panel with box selection for Bubbles trace analysis",
+    "keywords": ["panel", "heatmap", "deltas", "traces", "latency"],
+    "description": "Heatmap panel with box selection for Event Deltas trace analysis",
     "author": {
-      "name": "Heatmapbubbles"
+      "name": "Jordan Simonovski",
+      "url": "https://github.com/jordan-simonovski"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "links": [],
-    "screenshots": [],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-panel/README.md"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-panel/LICENSE"
+      }
+    ],
+    "screenshots": [
+      {
+        "name": "Box selection over a latency cluster",
+        "path": "img/selection.png"
+      },
+      {
+        "name": "Latency heatmap panel",
+        "path": "img/panel.png"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=11.6.0",
+    "grafanaDependency": ">=12.0.0",
     "plugins": []
   }
 }

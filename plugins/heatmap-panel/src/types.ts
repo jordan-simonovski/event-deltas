@@ -15,9 +15,9 @@ export interface HeatmapSelection {
 }
 
 export class HeatmapSelectionEvent extends BusEventWithPayload<HeatmapSelection> {
-  static type = 'heatmap-bubbles-selection';
+  static type = 'event-deltas-selection';
 }
 
 export class HeatmapSelectionClearedEvent extends BusEventWithPayload<null> {
-  static type = 'heatmap-bubbles-selection-clear';
+  static type = 'event-deltas-selection-clear';
 }

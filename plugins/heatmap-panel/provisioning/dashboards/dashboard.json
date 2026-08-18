@@ -51,7 +51,7 @@
         }
       ],
       "title": "Sample Panel Title",
-      "type": "jordo-heatmap-bubbles-panel"
+      "type": "jordo-event-deltas-panel"
     },
     {
       "datasource": {
@@ -82,7 +82,7 @@
         }
       ],
       "title": "Sample Panel Title",
-      "type": "jordo-heatmap-bubbles-panel"
+      "type": "jordo-event-deltas-panel"
     }
   ],
   "refresh": "",

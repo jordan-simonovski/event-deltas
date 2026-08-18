@@ -1,5 +1,6 @@
 import {
   AdHocFiltersVariable,
+  CustomVariable,
   EmbeddedScene,
   QueryVariable,
   SceneControlsSpacer,
@@ -17,10 +18,10 @@ import {
 import { locationService } from '@grafana/runtime';
 import { CLICKHOUSE_DS, ROUTES } from '../../constants';
 import { prefixRoute } from '../../utils/utils.routing';
-import { SelectionState } from '../../components/Bubbles/SelectionState';
-import { AttributeComparisonPanel } from '../../components/Bubbles/AttributeComparisonPanel';
-import { RepresentativeTracesPanel } from '../../components/Bubbles/RepresentativeTracesPanel';
-import { ViewModeControl } from '../../components/Bubbles/ViewModeControl';
+import { SelectionState } from '../../components/Deltas/SelectionState';
+import { AttributeComparisonPanel } from '../../components/Deltas/AttributeComparisonPanel';
+import { RepresentativeTracesPanel } from '../../components/Deltas/RepresentativeTracesPanel';
+import { ViewModeControl } from '../../components/Deltas/ViewModeControl';
 import {
   InvestigationGuidancePanel,
   SaturationPanel,
@@ -39,7 +40,8 @@ export type WorkbenchView = 'explorer' | 'comparisons' | 'evidence';
 function buildHeatmapSql(
   serviceVar: QueryVariable,
   adHocFilters: AdHocFiltersVariable,
-  mode: string
+  mode: string,
+  maxSamples: number
 ): string {
   const parts: string[] = [];
 
@@ -58,17 +60,21 @@ function buildHeatmapSql(
   const extra = parts.length > 0 ? '\n          AND ' + parts.join('\n          AND ') : '';
   const errorCol = mode === 'errors' ? `,\n          StatusCode = 'Error' as isError` : '';
 
+  // Ordering by hash, not by time. `ORDER BY Timestamp LIMIT n` returns the
+  // oldest n rows, so on a busy window the heatmap only ever showed its opening
+  // seconds — measured at 54s of a 900s window. Hashing TraceId samples the
+  // whole window instead, and is stable across refreshes.
   return `SELECT
           Timestamp as timestamp,
           Duration / 1000000 as duration,
           TraceId as traceId${errorCol}
         FROM otel_traces
         WHERE $__timeFilter(Timestamp)${extra}
-        ORDER BY Timestamp
-        LIMIT 10000`;
+        ORDER BY cityHash64(TraceId)
+        LIMIT ${maxSamples}`;
 }
 
-export function bubblesScene(view: WorkbenchView = 'explorer') {
+export function deltasScene(view: WorkbenchView = 'explorer') {
   const timeRange = new SceneTimeRange({
     from: 'now-15m',
     to: 'now',
@@ -100,7 +106,20 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
     filters: [],
   });
 
+  // Sample size trades detail for query latency. The heatmap is a sample either
+  // way; this only controls how large a one.
+  const samplesVar = new CustomVariable({
+    name: 'samples',
+    label: 'Sample size',
+    query: '1000,5000,10000,25000,50000',
+    value: '10000',
+  });
+
   const currentMode = () => viewMode.state.mode;
+  const currentSamples = () => {
+    const parsed = Number(samplesVar.state.value);
+    return Number.isFinite(parsed) && parsed > 0 ? Math.floor(parsed) : 10000;
+  };
 
   const heatmapQuery = new SceneQueryRunner({
     datasource: CLICKHOUSE_DS,
@@ -108,7 +127,7 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
       {
         refId: 'heatmap',
         datasource: CLICKHOUSE_DS,
-        rawSql: buildHeatmapSql(serviceVar, adHocFilters, currentMode()),
+        rawSql: buildHeatmapSql(serviceVar, adHocFilters, currentMode(), currentSamples()),
         format: 1,
         queryType: 'sql',
       },
@@ -117,7 +136,7 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
   });
 
   function refreshHeatmapQuery() {
-    const newSql = buildHeatmapSql(serviceVar, adHocFilters, currentMode());
+    const newSql = buildHeatmapSql(serviceVar, adHocFilters, currentMode(), currentSamples());
     const current = heatmapQuery.state.queries[0];
     if ((current as any).rawSql === newSql) {
       return;
@@ -254,6 +273,15 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
     return () => sub.unsubscribe();
   });
 
+  samplesVar.addActivationHandler(() => {
+    const sub = samplesVar.subscribeToState((newState, prevState) => {
+      if (newState.value !== prevState.value) {
+        refreshHeatmapQuery();
+      }
+    });
+    return () => sub.unsubscribe();
+  });
+
   serviceVar.addActivationHandler(() => {
     const sub = serviceVar.subscribeToState((newState, prevState) => {
       if (newState.value !== prevState.value) {
@@ -280,7 +308,7 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
 
   const heatmapVizPanel = new VizPanel({
     title: PANEL_TITLES[currentMode()] ?? PANEL_TITLES.latency,
-    pluginId: 'jordo-heatmap-bubbles-panel',
+    pluginId: 'jordo-event-deltas-panel',
     options: {
       yAxisScale: 'log',
       colorScheme: 'blues',
@@ -378,7 +406,7 @@ export function bubblesScene(view: WorkbenchView = 'explorer') {
   return new EmbeddedScene({
     $timeRange: timeRange,
     $variables: new SceneVariableSet({
-      variables: [serviceVar, adHocFilters],
+      variables: [serviceVar, samplesVar, adHocFilters],
     }),
     $data: heatmapQuery,
     body: new SceneFlexLayout({

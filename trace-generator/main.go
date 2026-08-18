@@ -1,5 +1,5 @@
 /*
-Trace Generator — synthetic traces for the heatmap-bubbles stack.
+Trace Generator — synthetic traces for the event-deltas stack.
 
 Emits ~50 traces/sec through an api-gateway root span, with downstream
 service spans (order-service, user-service, search-service, payment-service,

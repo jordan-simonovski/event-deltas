@@ -14,13 +14,13 @@ export interface TimeseriesSelection {
 }
 
 /**
- * Published on the same bus channel as HeatmapSelectionEvent ('heatmap-bubbles-selection')
+ * Published on the same bus channel as HeatmapSelectionEvent ('event-deltas-selection')
  * so that SelectionState in shared-comparison picks it up identically.
  */
 export class TimeseriesSelectionEvent extends BusEventWithPayload<TimeseriesSelection> {
-  static type = 'heatmap-bubbles-selection';
+  static type = 'event-deltas-selection';
 }
 
 export class TimeseriesSelectionClearedEvent extends BusEventWithPayload<null> {
-  static type = 'heatmap-bubbles-selection-clear';
+  static type = 'event-deltas-selection-clear';
 }

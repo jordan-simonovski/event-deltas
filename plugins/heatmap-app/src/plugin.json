@@ -1,33 +1,60 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "app",
-  "name": "Heatmap Bubbles App",
-  "id": "jordo-heatmap-bubbles-app",
+  "name": "Event Deltas App",
+  "id": "jordo-event-deltas-app",
   "info": {
-    "keywords": ["app", "heatmap", "bubbles", "traces", "latency", "comparison"],
-    "description": "Bubbles trace analysis app with heatmap selection and attribute comparison",
+    "keywords": ["app", "heatmap", "deltas", "traces", "latency", "comparison"],
+    "description": "Event Deltas trace analysis app with heatmap selection and attribute comparison",
     "author": {
-      "name": "Heatmapbubbles"
+      "name": "Jordan Simonovski",
+      "url": "https://github.com/jordan-simonovski"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
-    "screenshots": [],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-app/README.md"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/heatmap-app/LICENSE"
+      }
+    ],
+    "screenshots": [
+      {
+        "name": "Selecting an outlier region and comparing it to baseline",
+        "path": "img/demo.gif"
+      }
+    ],
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
   "includes": [
     {
       "type": "page",
-      "name": "Explorer",
+      "name": "Event Deltas",
       "path": "/a/%PLUGIN_ID%/explorer",
       "addToNav": true,
       "defaultNav": true
     }
   ],
   "dependencies": {
-    "grafanaDependency": ">=11.6.0",
-    "plugins": []
+    "grafanaDependency": ">=12.0.0",
+    "plugins": [
+      {
+        "id": "jordo-event-deltas-panel",
+        "name": "Event Deltas",
+        "type": "panel",
+        "version": ">=2.0.0"
+      }
+    ]
   }
 }

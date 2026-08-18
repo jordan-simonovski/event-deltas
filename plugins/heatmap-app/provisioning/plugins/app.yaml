@@ -1,6 +1,6 @@
 apiVersion: 1
 
 apps:
-  - type: 'jordo-heatmap-bubbles-app'
+  - type: 'jordo-event-deltas-app'
     org_id: 1
     disabled: false

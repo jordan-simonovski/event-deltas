@@ -34,7 +34,7 @@ This document defines UI/UX conventions for Scenes-based investigation apps in t
 
 ## Selection Lifecycle
 
-- Selection publish event: `heatmap-bubbles-selection`.
-- Selection clear event: `heatmap-bubbles-selection-clear`.
+- Selection publish event: `event-deltas-selection`.
+- Selection clear event: `event-deltas-selection-clear`.
 - Heatmap and timeseries selection panels must both publish on the same channels.
 - Shared selection state must clear downstream views when clear events are published.

@@ -30,22 +30,54 @@ write_md5_file() {
   exit 1
 }
 
-# Signing mode. These plugin IDs are not registered in the Grafana catalog,
-# so a catalog signature (sign-plugin with no --rootUrls) is always rejected
-# with HTTP 409. The only signature Grafana will grant us is a PRIVATE one,
-# which requires the root URL(s) of the Grafana instance(s) the plugins run on.
-# Set GRAFANA_SIGN_ROOT_URLS (comma-separated) to sign; leave it unset to
-# publish unsigned zips — which is how these plugins are already loaded
-# (GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS in docker-compose).
-SIGNING_ENABLED=false
-if [[ -n "${GRAFANA_SIGN_ROOT_URLS:-}" ]]; then
-  SIGNING_ENABLED=true
-  if [[ -z "${GRAFANA_ACCESS_POLICY_TOKEN:-}" ]]; then
-    echo "Error: GRAFANA_SIGN_ROOT_URLS is set but GRAFANA_ACCESS_POLICY_TOKEN is not. Cannot sign." >&2
-    exit 1
+# The Grafana catalog submission form asks for the SHA1 of the archive.
+write_sha1_file() {
+  local input_file="$1"
+  local output_file="$2"
+
+  if command -v sha1sum >/dev/null 2>&1; then
+    sha1sum "$input_file" | awk '{print $1}' >"$output_file"
+    return
   fi
-else
-  echo "GRAFANA_SIGN_ROOT_URLS is not set — publishing UNSIGNED plugin zips." >&2
+
+  if command -v shasum >/dev/null 2>&1; then
+    shasum -a 1 "$input_file" | awk '{print $1}' >"$output_file"
+    return
+  fi
+
+  echo "Error: neither sha1sum nor shasum is available to generate checksums." >&2
+  exit 1
+}
+
+# Signing mode. Two mutually exclusive opt-ins, both off by default:
+#
+#   GRAFANA_SIGN_ROOT_URLS=<url,url>  private signature, scoped to those Grafana
+#                                     instances. Works for any plugin ID.
+#   GRAFANA_SIGN_CATALOG=true         community signature for the Grafana plugin
+#                                     catalog. Only works once the plugin ID
+#                                     prefix (jordo-) is a Grafana Cloud org slug
+#                                     we own and the token belongs to that org —
+#                                     otherwise Grafana answers HTTP 409.
+#
+# Neither set means unsigned zips, which is how the demo stack loads them
+# (GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS in docker-compose).
+SIGN_MODE="none"
+if [[ -n "${GRAFANA_SIGN_ROOT_URLS:-}" && "${GRAFANA_SIGN_CATALOG:-}" == "true" ]]; then
+  echo "Error: set either GRAFANA_SIGN_ROOT_URLS (private) or GRAFANA_SIGN_CATALOG (community), not both." >&2
+  exit 1
+elif [[ -n "${GRAFANA_SIGN_ROOT_URLS:-}" ]]; then
+  SIGN_MODE="private"
+elif [[ "${GRAFANA_SIGN_CATALOG:-}" == "true" ]]; then
+  SIGN_MODE="catalog"
+fi
+
+if [[ "$SIGN_MODE" != "none" && -z "${GRAFANA_ACCESS_POLICY_TOKEN:-}" ]]; then
+  echo "Error: signing is enabled but GRAFANA_ACCESS_POLICY_TOKEN is not set." >&2
+  exit 1
+fi
+
+if [[ "$SIGN_MODE" == "none" ]]; then
+  echo "No signing mode set — publishing UNSIGNED plugin zips." >&2
   echo "Grafana must allowlist them via GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS." >&2
 fi
 
@@ -77,11 +109,16 @@ for PLUGIN in "${PLUGINS[@]}"; do
     continue
   fi
 
-  if [[ "$SIGNING_ENABLED" == "true" ]]; then
-    # Private signature scoped to the configured Grafana instance root URL(s).
-    echo "    Signing plugin (private, rootUrls: ${GRAFANA_SIGN_ROOT_URLS})..."
+  if [[ "$SIGN_MODE" != "none" ]]; then
+    if [[ "$SIGN_MODE" == "private" ]]; then
+      echo "    Signing plugin (private, rootUrls: ${GRAFANA_SIGN_ROOT_URLS})..."
+      SIGN_ARGS=(--rootUrls "$GRAFANA_SIGN_ROOT_URLS")
+    else
+      echo "    Signing plugin (community, Grafana catalog)..."
+      SIGN_ARGS=()
+    fi
     if SIGN_OUTPUT=$(cd "$PLUGIN_DIR" && GRAFANA_ACCESS_POLICY_TOKEN="$GRAFANA_ACCESS_POLICY_TOKEN" \
-        npm run sign -- --rootUrls "$GRAFANA_SIGN_ROOT_URLS" 2>&1); then
+        npm run sign -- ${SIGN_ARGS[@]+"${SIGN_ARGS[@]}"} 2>&1); then
       printf '%s\n' "$SIGN_OUTPUT"
     else
       SIGN_EXIT=$?
@@ -120,21 +157,24 @@ for PLUGIN in "${PLUGINS[@]}"; do
 
   ZIP_PATH="$PLUGIN_DIR/${PLUGIN_ID}-${VERSION}.zip"
   MD5_PATH="$PLUGIN_DIR/${PLUGIN_ID}-${VERSION}.zip.md5"
+  SHA1_PATH="$PLUGIN_DIR/${PLUGIN_ID}-${VERSION}.zip.sha1"
 
-  echo "    Generating MD5 checksum ${PLUGIN_ID}-${VERSION}.zip.md5..."
+  echo "    Generating checksums (.md5, .sha1)..."
   write_md5_file "$ZIP_PATH" "$MD5_PATH"
+  write_sha1_file "$ZIP_PATH" "$SHA1_PATH"
 
-  # Create the GitHub release and attach the zip + md5
+  # Create the GitHub release and attach the zip + checksums
   echo "    Creating GitHub release $TAG..."
   gh release create "$TAG" \
     --repo "$GITHUB_REPOSITORY" \
     --title "${PLUGIN_ID} v${VERSION}" \
     --notes "$NOTES" \
     "$ZIP_PATH" \
-    "$MD5_PATH"
+    "$MD5_PATH" \
+    "$SHA1_PATH"
 
   # Clean up release assets from the plugin directory
-  rm -f "$ZIP_PATH" "$MD5_PATH"
+  rm -f "$ZIP_PATH" "$MD5_PATH" "$SHA1_PATH"
 
   echo "    Released $TAG"
 done

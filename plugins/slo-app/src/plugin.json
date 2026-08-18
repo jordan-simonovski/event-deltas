@@ -2,17 +2,32 @@
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
   "type": "app",
   "name": "SLO Analysis App",
-  "id": "jordo-slo-bubbles-app",
+  "id": "jordo-slo-app",
   "info": {
     "keywords": ["app", "slo", "heatmap", "traces", "latency", "error-rate", "comparison"],
     "description": "SLO monitoring with heatmap drilldown and attribute comparison for root-cause analysis",
     "author": {
-      "name": "Heatmapbubbles"
+      "name": "Jordan Simonovski",
+      "url": "https://github.com/jordan-simonovski"
     },
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation"
+      },
+      {
+        "name": "Documentation",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/slo-app/README.md"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/jordan-simonovski/heatmap-investigation/blob/main/plugins/slo-app/LICENSE"
+      }
+    ],
     "screenshots": [],
     "version": "%VERSION%",
     "updated": "%TODAY%"
@@ -45,7 +60,20 @@
     }
   ],
   "dependencies": {
-    "grafanaDependency": ">=11.6.0",
-    "plugins": []
+    "grafanaDependency": ">=12.0.0",
+    "plugins": [
+      {
+        "id": "jordo-event-deltas-panel",
+        "name": "Event Deltas",
+        "type": "panel",
+        "version": ">=2.0.0"
+      },
+      {
+        "id": "jordo-timeseries-selection-panel",
+        "name": "Timeseries Selection",
+        "type": "panel",
+        "version": ">=2.0.0"
+      }
+    ]
   }
 }
