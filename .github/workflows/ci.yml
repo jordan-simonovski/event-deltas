@@ -26,6 +26,11 @@ jobs:
           node-version: '22'
           cache: 'npm'
 
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24'
+
       - name: Install dependencies
         run: npm ci
 
@@ -40,3 +45,9 @@ jobs:
 
       - name: Run unit tests
         run: npm run test:ci
+
+      # The same validator the plugin catalog runs on submission. It checks
+      # things nothing else here does — licence files, README links, manifest
+      # completeness — and our first submission was rejected by it.
+      - name: Validate plugins against the Grafana catalog rules
+        run: npm run validate-plugins
